@@ -193,12 +193,26 @@ public class AESDecode {
         }
         return result;
     }
+
+    public static String Recognition(String image_url){
+        String ak_id = "LTAIgALJJbCimbcV"; //用户ak
+        String ak_secret = "mc3n98lVVhRKHCwhKcgHwgULcg3yb1"; // 用户ak_secret
+        String url = "https://dtplus-cn-shanghai.data.aliyuncs.com/image/tag";
+        String body = "{\"type\": 0, \"image_url\":\""+ image_url +"\"}";
+        try{
+            return (String)sendPost(url, body, ak_id, ak_secret);
+        } catch (Exception e){
+            e.printStackTrace();
+            return "解析失败";
+        }
+
+    }
     public static void main(String[] args) throws Exception {
         // 发送POST请求示例
         String ak_id = "LTAIgALJJbCimbcV"; //用户ak
         String ak_secret = "mc3n98lVVhRKHCwhKcgHwgULcg3yb1"; // 用户ak_secret
         String url = "https://dtplus-cn-shanghai.data.aliyuncs.com/image/tag";
-        String body = "{\"type\": 0, \"image_url\":\"http://oyf9q4qzp.bkt.clouddn.com/1514099619.jpeg\"}";
+        String body = "{\"type\": 0, \"image_url\":\"https://calabash-brothers-eyes-1256400655.cos.ap-beijing.myqcloud.com/image/test.jpg\"}";
         System.out.println("response body:" + sendPost(url, body, ak_id, ak_secret));
         // 发送GET请求
 //        String ak_id1 = "NMV.............5jv"; //用户ak
