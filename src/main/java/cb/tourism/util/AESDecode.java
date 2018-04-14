@@ -194,10 +194,15 @@ public class AESDecode {
         return result;
     }
 
-    public static String Recognition(String image_url){
+    public static String Recognition(String image_url, int type){
+        // type: 0 tag, 1 scene
         String ak_id = "LTAIgALJJbCimbcV"; //用户ak
         String ak_secret = "mc3n98lVVhRKHCwhKcgHwgULcg3yb1"; // 用户ak_secret
+
         String url = "https://dtplus-cn-shanghai.data.aliyuncs.com/image/tag";
+        if (type == 1){
+            url = "https://dtplus-cn-shanghai.data.aliyuncs.com/image/scene";
+        }
         String body = "{\"type\": 0, \"image_url\":\""+ image_url +"\"}";
         try{
             return (String)sendPost(url, body, ak_id, ak_secret);
@@ -207,6 +212,15 @@ public class AESDecode {
         }
 
     }
+
+    public static String TagRecognition(String image_url){
+        return Recognition(image_url, 0);
+    }
+
+    public static String SceneRecognition(String image_url){
+        return Recognition(image_url, 1);
+    }
+
     public static void main(String[] args) throws Exception {
         // 发送POST请求示例
         String ak_id = "LTAIgALJJbCimbcV"; //用户ak

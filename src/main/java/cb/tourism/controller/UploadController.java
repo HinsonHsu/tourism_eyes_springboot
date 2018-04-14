@@ -40,8 +40,10 @@ public class UploadController {
             //上传至腾讯云对象存储
             String destPath = "/image/";
             QCloudUpload.SimpleUploadFileFromLocal(filePath, newFileName, destPath);
+
+            //调用阿里云图像打标解析
             String image_url = "https://calabash-brothers-eyes-1256400655.cos.ap-beijing.myqcloud.com" + destPath + newFileName;
-            String recognition = AESDecode.Recognition(image_url);
+            String recognition = AESDecode.Recognition(image_url, 1);
             return recognition;
 //            return "上传成功";
         } catch (IllegalStateException e){
