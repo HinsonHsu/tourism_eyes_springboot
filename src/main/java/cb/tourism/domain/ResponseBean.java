@@ -11,6 +11,11 @@ public class ResponseBean {
     // 返回的数据
     private Object data;
 
+    public ResponseBean(int code, String msg){
+        this.code = code;
+        this.msg = msg;
+    }
+
     public ResponseBean(int code, String msg, Object data) {
         this.code = code;
         this.msg = msg;

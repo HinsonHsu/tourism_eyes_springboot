@@ -6,7 +6,9 @@ import cb.tourism.domain.repository.UserRepository;
 import cb.tourism.exception.UnauthorizedException;
 import cb.tourism.redis.RedisService;
 import cb.tourism.service.UserService;
+import cb.tourism.service.WXService;
 import cb.tourism.util.JWTUtil;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -25,6 +27,8 @@ public class WebController {
     private static final Logger LOGGER = LogManager.getLogger(WebController.class);
 
     private UserService userService;
+    @Autowired
+    private WXService wxService;
 
     @Autowired
     private RedisService redisService;
@@ -37,23 +41,26 @@ public class WebController {
     }
 
     @PostMapping("/login")
-    public ResponseBean login(@RequestParam("openid") String openid,
-                              @RequestParam("username") String username) {
+    public ResponseBean login(@RequestParam("code") String code) {
+        System.out.println("code:"+code);
+        JSONObject resObject = wxService.getOpenIdAndSenssion_keyByCode(code);
+        String openid = resObject.getString("openid");
+        if (openid == null){
+            return new ResponseBean(400, "invalid code");
+        }
         User user = userRepository.findByOpenId(openid);
         if (user == null){
             user = new User();
-            user.setUserName(username);
             user.setOpenId(openid);
             userRepository.save(user);
         }
-        if (user.getUserName().equals(username)) {
-            String token = JWTUtil.sign(username, openid);
-            redisService.set(openid, token,1);
-            System.out.println("redis: " + redisService.get(openid));
-            return new ResponseBean(200, "Login success", token);
-        } else {
-            return new ResponseBean(200, "mismatching username", "用户名不正确");
+        if(redisService.get(openid) == null){
+            redisService.set(openid, JWTUtil.sign(openid, openid),30);
         }
+        Object token = redisService.get(openid);
+        redisService.set(openid, token,30);
+        return new ResponseBean(200, "login success", token);
+
     }
 
     @GetMapping("/article")

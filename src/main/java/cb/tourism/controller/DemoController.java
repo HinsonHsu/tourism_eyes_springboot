@@ -4,6 +4,7 @@ import cb.tourism.domain.User;
 import cb.tourism.domain.repository.UserRepository;
 import cb.tourism.mq.Sender;
 import cb.tourism.redis.RedisService;
+import cb.tourism.service.WXService;
 import cb.tourism.util.CommonUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.binary.StringUtils;
@@ -30,8 +31,8 @@ public class DemoController {
     private RedisService redisService;
     @Autowired
     private UserRepository userRepository;
-
-
+    @Autowired
+    private WXService wxService;
     @RequestMapping("/rabbit")
     public String rabbitTest(){
         sender.send();
@@ -42,19 +43,8 @@ public class DemoController {
 
     @RequestMapping(value = "/code", method = RequestMethod.POST)
     public String codeTest(@RequestParam(value="code") String code){
-        System.out.println("code: " + code);
-        String WX_URL = "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code";
-        try {
-            String requestUrl = WX_URL.replace("APPID", "wx32672e87f03da727").
-                    replace("SECRET", "601debbb04689794fcd84080e4098bf2").replace("JSCODE", code).
-                    replace("authorization_code", "authorization_code");
-            // 发起GET请求获取凭证
-            JSONObject jsonObject = CommonUtil.httpsRequest(requestUrl, "GET", null);
-            System.out.println(jsonObject.toJSONString());
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return "OKay";
+
+        return wxService.getOpenIdAndSenssion_keyByCode(code).toJSONString();
     }
 
     @RequestMapping(value = "/ajaxLogin", method = RequestMethod.POST)

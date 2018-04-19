@@ -68,20 +68,21 @@ public class MyRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
-
         String token = (String) auth.getCredentials();
+        System.out.println("token: " + token);
         // 解密获得username，用于和数据库进行对比
-        String username = JWTUtil.getUsername(token);
+        String openid = JWTUtil.getUsername(token);
+        System.out.println("openId: "+openid);
 
-
-        if (username == null) {
-            throw new AuthenticationException("token invalid");
+        if (openid == null) {
+            throw new AuthenticationException("openid invalid");
         }
 
 //        UserBean userBean = userService.getUser(username);
-        User user = userRepository.findByUserName(username);
-
-        if (redisService.get(user.openId) != null){
+        User user = userRepository.findByOpenId(openid);
+        System.out.println("user: "+user.getOpenId());
+        if (redisService.get(user.getOpenId()) != null){
+            token = redisService.get(user.getOpenId()).toString();
             System.out.println("token 有效");
             return new SimpleAuthenticationInfo(token, token, "my_realm");
         } else {
@@ -92,7 +93,7 @@ public class MyRealm extends AuthorizingRealm {
             throw new AuthenticationException("User didn't existed!");
         }
 
-        if (! JWTUtil.verify(token, username, user.getOpenId())) {
+        if (! JWTUtil.verify(token, openid, user.getOpenId())) {
             throw new AuthenticationException("Username or password error");
         }
 
