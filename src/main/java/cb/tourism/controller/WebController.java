@@ -1,8 +1,10 @@
 package cb.tourism.controller;
 
 import cb.tourism.domain.ResponseBean;
-import cb.tourism.domain.UserBean;
+import cb.tourism.domain.User;
+import cb.tourism.domain.repository.UserRepository;
 import cb.tourism.exception.UnauthorizedException;
+import cb.tourism.redis.RedisService;
 import cb.tourism.service.UserService;
 import cb.tourism.util.JWTUtil;
 import org.apache.log4j.LogManager;
@@ -25,18 +27,32 @@ public class WebController {
     private UserService userService;
 
     @Autowired
+    private RedisService redisService;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     public void setService(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping("/login")
-    public ResponseBean login(@RequestParam("username") String username,
-                              @RequestParam("password") String password) {
-        UserBean userBean = userService.getUser(username);
-        if (userBean.getPassword().equals(password)) {
-            return new ResponseBean(200, "Login success", JWTUtil.sign(username, password));
+    public ResponseBean login(@RequestParam("openid") String openid,
+                              @RequestParam("username") String username) {
+        User user = userRepository.findByOpenId(openid);
+        if (user == null){
+            user = new User();
+            user.setUserName(username);
+            user.setOpenId(openid);
+            userRepository.save(user);
+        }
+        if (user.getUserName().equals(username)) {
+            String token = JWTUtil.sign(username, openid);
+            redisService.set(openid, token,1);
+            System.out.println("redis: " + redisService.get(openid));
+            return new ResponseBean(200, "Login success", token);
         } else {
-            throw new UnauthorizedException();
+            return new ResponseBean(200, "mismatching username", "用户名不正确");
         }
     }
 

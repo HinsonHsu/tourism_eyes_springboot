@@ -18,15 +18,16 @@ public class RedisService <T> {
      */
     private static final long MINUTES_OF_ONE_DAY = 24 * 60;
 
+    private static final long TOKEN_EXPIRED = 30;
 
     /**
-     * 将 key，value 存放到redis数据库中，默认设置过期时间为一天
+     * 将 key，value 存放到redis数据库中，默认设置过期时间为30分钟
      *
      * @param key
      * @param value
      */
     public void set(String key, T value) {
-        set(key, value, MINUTES_OF_ONE_DAY);
+        set(key, value, TOKEN_EXPIRED);
     }
 
     /**

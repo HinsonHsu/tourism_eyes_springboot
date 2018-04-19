@@ -6,22 +6,31 @@ public class User {
     @Id
     public String id;
 
-    public String firstName;
-    public String lastName;
+    public String openId;
+    public String userName;
+    public String password;
 
-    public String getFirstName() {
-        return firstName;
+    public String getOpenId() {
+        return openId;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

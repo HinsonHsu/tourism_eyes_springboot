@@ -1,6 +1,9 @@
 package cb.tourism.shiro;
 
+import cb.tourism.domain.User;
 import cb.tourism.domain.UserBean;
+import cb.tourism.domain.repository.UserRepository;
+import cb.tourism.redis.RedisService;
 import cb.tourism.service.UserService;
 import cb.tourism.util.JWTUtil;
 import org.apache.log4j.LogManager;
@@ -26,6 +29,12 @@ public class MyRealm extends AuthorizingRealm {
     private static final Logger LOGGER = LogManager.getLogger(MyRealm.class);
 
     private UserService userService;
+
+    @Autowired
+    private RedisService redisService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -59,19 +68,31 @@ public class MyRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
+
         String token = (String) auth.getCredentials();
         // 解密获得username，用于和数据库进行对比
         String username = JWTUtil.getUsername(token);
+
+
         if (username == null) {
             throw new AuthenticationException("token invalid");
         }
 
-        UserBean userBean = userService.getUser(username);
-        if (userBean == null) {
+//        UserBean userBean = userService.getUser(username);
+        User user = userRepository.findByUserName(username);
+
+        if (redisService.get(user.openId) != null){
+            System.out.println("token 有效");
+            return new SimpleAuthenticationInfo(token, token, "my_realm");
+        } else {
+            System.out.println("token 暂未缓存");
+        }
+
+        if (user == null) {
             throw new AuthenticationException("User didn't existed!");
         }
 
-        if (! JWTUtil.verify(token, username, userBean.getPassword())) {
+        if (! JWTUtil.verify(token, username, user.getOpenId())) {
             throw new AuthenticationException("Username or password error");
         }
 

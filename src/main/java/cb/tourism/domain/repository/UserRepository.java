@@ -8,8 +8,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "user", path="user")
-public interface CustomerRepository extends MongoRepository<User, String> {
-
-    List<User> findByLastName(@Param("name") String name);
-
+public interface UserRepository extends MongoRepository<User, String> {
+    User findByOpenId(@Param("openId") String  openId);
+    User findByUserName(@Param("userName") String  userName);
 }

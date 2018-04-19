@@ -1,10 +1,13 @@
 package cb.tourism.util;
 
+import cb.tourism.domain.repository.UserRepository;
+import cb.tourism.redis.RedisService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -57,10 +60,11 @@ public class JWTUtil {
             Date date = new Date(System.currentTimeMillis()+EXPIRE_TIME);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             // 附带username信息
-            return JWT.create()
+            String token = JWT.create()
                     .withClaim("username", username)
                     .withExpiresAt(date)
                     .sign(algorithm);
+            return token;
         } catch (UnsupportedEncodingException e) {
             return null;
         }
