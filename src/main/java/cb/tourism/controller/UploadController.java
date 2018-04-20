@@ -19,7 +19,11 @@ public class UploadController {
 
     @Autowired
     private RecognitionService recognitionService;
-
+    /*
+    支持场景识别和图像打标
+    type：0 场景识别（默认）
+    type：1 图像打标
+     */
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResponseBean upload(@RequestParam("photo") MultipartFile file){
         if (file.isEmpty()){
