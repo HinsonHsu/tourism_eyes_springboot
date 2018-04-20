@@ -20,11 +20,6 @@ public class UploadController {
     @Autowired
     private RecognitionService recognitionService;
 
-    @RequestMapping("/hello")
-    public String index(){
-        return "Hello World";
-    }
-
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResponseBean upload(@RequestParam("photo") MultipartFile file){
         if (file.isEmpty()){
