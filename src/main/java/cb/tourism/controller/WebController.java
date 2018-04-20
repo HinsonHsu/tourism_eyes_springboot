@@ -40,6 +40,10 @@ public class WebController {
         this.userService = userService;
     }
 
+    /*
+    Post 请求login
+    @Param code 微信小程序获取的code，只能使用一次
+     */
     @PostMapping("/login")
     public ResponseBean login(@RequestParam("code") String code) {
         System.out.println("code:"+code);

@@ -20,6 +20,14 @@ public class UploadController {
     @Autowired
     private RecognitionService recognitionService;
     /*
+    测试api接口 get
+     */
+    @RequestMapping("/hello")
+    public String index(){
+        return "Hello World";
+    }
+
+    /*
     支持场景识别和图像打标
     type：0 场景识别（默认）
     type：1 图像打标
