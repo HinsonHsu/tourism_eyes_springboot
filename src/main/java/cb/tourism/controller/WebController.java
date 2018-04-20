@@ -62,7 +62,9 @@ public class WebController {
         return new ResponseBean(200, "login success", token);
 
     }
-
+    /*
+    测试token是否可用，根据token来认证用户是否登录
+     */
     @GetMapping("/article")
     public ResponseBean article() {
         Subject subject = SecurityUtils.getSubject();
