@@ -19,7 +19,9 @@ public class UploadController {
 
     @Autowired
     private RecognitionService recognitionService;
-
+    /*?
+    测试api接口 get
+     */
     @RequestMapping("/hello")
     public String index(){
         return "Hello World";
