@@ -1,9 +1,14 @@
 package cb.tourism.controller;
 
+import cb.tourism.domain.ScenicSpot;
+import cb.tourism.domain.TourRoute;
 import cb.tourism.domain.User;
+import cb.tourism.domain.repository.ScenicSpotRepository;
+import cb.tourism.domain.repository.TourRouteRepository;
 import cb.tourism.domain.repository.UserRepository;
 import cb.tourism.mq.Sender;
 import cb.tourism.redis.RedisService;
+import cb.tourism.service.ScenicSpotService;
 import cb.tourism.service.WXService;
 import cb.tourism.util.CommonUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -33,6 +38,42 @@ public class DemoController {
     private UserRepository userRepository;
     @Autowired
     private WXService wxService;
+
+    @Autowired
+    private ScenicSpotRepository scenicSpotRepository;
+    @Autowired
+    private TourRouteRepository tourRouteRepository;
+    @Autowired
+    private ScenicSpotService scenicSpotService;
+    @RequestMapping("/tourroutetest")
+    public String tourroteTest(){
+        TourRoute tourRoute = new TourRoute();
+        tourRoute.setScenicId("5afa3a9629a8e651d0269718");
+        tourRoute.setDayRoute("中国花园与中国城 -海德公园 -圣玛丽大教堂 -马丁广场 -悉尼塔 -Nando’s -喜来登公园酒店");
+        tourRoute.setDayIndex(3);
+        tourRouteRepository.save(tourRoute);
+//        System.out.println(tourRoute.id);
+//        String spotId = "5afa3a9629a8e651d0269718";
+//        ScenicSpot scenicSpot =  scenicSpotService.findScenicSpotById(spotId);
+//        System.out.println("he");
+        return "OKay";
+    }
+
+    @RequestMapping("/scenicspottest")
+    public String scenicspotTest(){
+        ScenicSpot ss = new ScenicSpot();
+        ss.setName("澳大利亚");
+        ss.setTitle("澳洲：带你探寻不一样的澳洲之旅");
+        ss.setDes("澳大利亚是全球土地面积最大的国家，国土面积比整个西欧大一半，澳大利亚不仅国土辽阔，而且物产丰富。其领土面积7692024平方公里，四面环海，是世界上唯一国土覆盖一整个大陆的国家，因此也称“澳洲”。拥有很多独特的动植物和自然景观的澳大利亚，是一个奉行多元文化的移民国家。");
+        ss.setScore(4.5f);
+        ss.setTime("每年十月到次年二月");
+        ss.setRecommendTakeDay(8);
+        ss.setVisaDegree("一般");
+        System.out.println("login: " + redisService.get("23423423425324"));
+        scenicSpotRepository.save(ss);
+        return "OKay";
+    }
+
     @RequestMapping("/rabbit")
     public String rabbitTest(){
         sender.send();
