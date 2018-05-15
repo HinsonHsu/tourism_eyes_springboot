@@ -23,7 +23,7 @@ public class RecommendationController {
         res.put("place", recommendationService.recommendStrategyBySpotId(spotId));
         res.put("routes", recommendationService.routeBySpotId(spotId));
         res.put("recommend", recommendationService.recommendSpot(spotId));
-        return new ResponseBean(400, "success", res);
+        return new ResponseBean(200, "success", res);
     }
 
     @RequestMapping(value = "/analogy", method = RequestMethod.GET)
@@ -31,10 +31,10 @@ public class RecommendationController {
         JSONObject object = new JSONObject();
         JSONArray array = recommendationService.RecommendationSpotIdListBySpotId(spotId);
         if(array.isEmpty()){
-            return new ResponseBean(400, "fail", "无相关景点！");
+            return new ResponseBean(200, "fail", "无相关景点！");
         }else{
             object.put("places", array);
-            return new ResponseBean(400, "success", object);
+            return new ResponseBean(200, "success", object);
         }
 
     }

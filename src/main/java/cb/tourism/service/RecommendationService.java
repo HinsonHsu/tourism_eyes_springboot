@@ -34,6 +34,7 @@ public class RecommendationService {
         object.put("day", scenicSpot.recommendTakeDay);
         object.put("visa", scenicSpot.visaDegree);
         object.put("image_url", scenicSpot.imageUrl);
+        object.put("time", scenicSpot.time);
         return  object;
     }
 
@@ -67,6 +68,7 @@ public class RecommendationService {
             JSONObject tmp = new JSONObject();
             tmp.put("day", tr.dayIndex);
             tmp.put("route", tr.dayRoute);
+            tmp.put("image_url", "https://calabash-brothers-eyes-1256400655.cos.ap-beijing.myqcloud.com/spot_image/1526370027095.jpg");
             array.add(tmp);
         }
         return array;
@@ -79,6 +81,7 @@ public class RecommendationService {
             JSONObject tmp = new JSONObject();
             tmp.put("name", "墨尔本" + i);
             tmp.put("score", 4.6);
+            tmp.put("image_url", "https://calabash-brothers-eyes-1256400655.cos.ap-beijing.myqcloud.com/spot_image/1526370027095.jpg");
             array.add(tmp);
         }
         return array;

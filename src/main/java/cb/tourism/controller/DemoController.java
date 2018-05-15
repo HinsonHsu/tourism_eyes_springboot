@@ -1,5 +1,6 @@
 package cb.tourism.controller;
 
+import cb.tourism.domain.ResponseBean;
 import cb.tourism.domain.ScenicSpot;
 import cb.tourism.domain.TourRoute;
 import cb.tourism.domain.User;
@@ -10,7 +11,9 @@ import cb.tourism.mq.Sender;
 import cb.tourism.redis.RedisService;
 import cb.tourism.service.ScenicSpotService;
 import cb.tourism.service.WXService;
+import cb.tourism.util.AESDecode;
 import cb.tourism.util.CommonUtil;
+import cb.tourism.util.QCloudUpload;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -21,9 +24,12 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +51,46 @@ public class DemoController {
     private TourRouteRepository tourRouteRepository;
     @Autowired
     private ScenicSpotService scenicSpotService;
+
+
+
+    @RequestMapping(value = "/imageupload", method = RequestMethod.POST)
+    public ResponseBean upload(@RequestParam("photo") MultipartFile file){
+        if (file.isEmpty()){
+            return new ResponseBean(400, "文件为空", "请选择上传文件");
+        }
+        String fileName = file.getOriginalFilename();
+        System.out.println("上传的文件名为：" + fileName);
+        String sufffixName = fileName.substring(fileName.lastIndexOf("."));
+        System.out.println("上传的后缀名为：" + sufffixName);
+        String filePath = "/data/upload/image/";
+        //判断当前是否为windows环境
+        String os = System.getProperty("os.name");
+        if(os.toLowerCase().startsWith("win")){
+            filePath = "E://upload_image//"; //windows下路径
+        }
+
+        String newFileName = Long.toString(System.currentTimeMillis()) + sufffixName;
+        File dest = new File(filePath + newFileName);
+        if (!dest.getParentFile().exists()){
+            dest.getParentFile().mkdirs();
+        }
+        try {
+            file.transferTo(dest);
+
+            //上传至腾讯云对象存储
+            String destPath = "/spot_image/";
+            QCloudUpload.SimpleUploadFileFromLocal(filePath, newFileName, destPath);
+
+            return new ResponseBean(200, "upload success", destPath+newFileName);
+        } catch (IllegalStateException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return new ResponseBean(500, "上传失败", "请稍后重试");
+    }
+
     @RequestMapping("/tourroutetest")
     public String tourroteTest(){
         TourRoute tourRoute = new TourRoute();
