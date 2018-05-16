@@ -123,6 +123,10 @@ public class HttpRequest {
         return result;
     }
 
+    public static String sendHttpGet(String url, String param){
+        return sendGet("http://www.hinson.xyz" + url, param);
+    }
+
     public static void main(String args[]){
         System.out.println(sendGet("http://www.hinson.xyz/analogy", "spotId=5afa3a9629a8e651d0269718"));
     }
