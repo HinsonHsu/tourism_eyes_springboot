@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Component
 public class RecommendationService {
@@ -23,8 +24,9 @@ public class RecommendationService {
 
     public JSONObject recommendStrategyBySpotId(String spotId){
 
-        spotId = "5afa3a9629a8e651d0269718";
-
+//        spotId = "5afa3a9629a8e651d0269718";
+//        spotId = "5b07fe8c7e72823ed8a58a7a";
+        System.out.println("recommendStrategyBySpotId: "+spotId);
         JSONObject object = new JSONObject();
         ScenicSpot scenicSpot = scenicSpotService.findScenicSpotById(spotId);
         object.put("spotId", scenicSpot.id);
@@ -39,11 +41,15 @@ public class RecommendationService {
     }
 
     public JSONArray RecommendationSpotIdListBySpotId(String spotId) {
+        //随机产生推荐景点， （景点较少)
+        Random rand = new Random();
+
+        System.out.println("RecommendationSpotIdListBySpotId: "+spotId);
         JSONArray array = new JSONArray();
         List<String> l = new ArrayList<>();
-        l.add("5afa3a9629a8e651d0269718");
-        l.add("5afa3a9629a8e651d0269718");
-        l.add("5afa3a9629a8e651d0269718");
+        l.add(RecognitionService.spots[rand.nextInt(5)]);
+        l.add(RecognitionService.spots[rand.nextInt(5)]);
+        l.add(RecognitionService.spots[rand.nextInt(5)]);
         for(int i=0; i < l.size(); i++){
             ScenicSpot scenicSpot = scenicSpotService.findScenicSpotById(l.get(i));
             JSONObject tmp = new JSONObject();
@@ -60,7 +66,7 @@ public class RecommendationService {
 
     public JSONArray routeBySpotId(String spotId){
 
-        spotId = "5afa3a9629a8e651d0269718";
+        spotId = "5b07fe8c7e72823ed8a58a7a";
 
         TourRoute[] tourRoutes = tourRouteRepository.findAllByScenicId(spotId);
         JSONArray array = new JSONArray();
@@ -77,11 +83,16 @@ public class RecommendationService {
     public JSONArray recommendSpot(String spotId){
         spotId = "5afa3a9629a8e651d0269718";
         JSONArray array = new JSONArray();
+
+
+        Random rand = new Random();
+
         for(int i=0; i<3; i++){
             JSONObject tmp = new JSONObject();
-            tmp.put("name", "墨尔本" + i);
-            tmp.put("score", 4.6);
-            tmp.put("image_url", "https://calabash-brothers-eyes-1256400655.cos.ap-beijing.myqcloud.com/spot_image/1526370027095.jpg");
+            ScenicSpot scenicSpot = scenicSpotService.findScenicSpotById(RecognitionService.spots[rand.nextInt(5)]);
+            tmp.put("name", scenicSpot.name);
+            tmp.put("score", scenicSpot.score);
+            tmp.put("image_url", scenicSpot.imageUrl);
             array.add(tmp);
         }
         return array;
