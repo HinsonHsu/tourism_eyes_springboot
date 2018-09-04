@@ -1,2 +1,4 @@
-# tourism_eyes_springboot
-# 2018 北京交通大学软件学院 研一 实训2项目
+# tourism_eyes_springboot 
+旅游之眼微信小程序后端支持
+# 架构
+Springboot + Shiro + Redis + MongoDB + RabbitMQ
